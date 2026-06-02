@@ -1,0 +1,140 @@
+<div class="pos-container">
+
+  <!-- Left Side: Product Selector Grid -->
+  <div class="pos-catalog glass-panel">
+    
+    <!-- Header with Search -->
+    <div class="catalog-header">
+      <h3 class="text-gradient-primary">POS Catalog</h3>
+      <div class="search-box">
+        <span class="material-symbols-outlined search-icon">search</span>
+        <input 
+          type="text" 
+          class="form-control search-input" 
+          placeholder="Filter by name or category..."
+          [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event)">
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-grid">
+      <div 
+        class="glass-card product-item-card" 
+        *ngFor="let prod of filteredProducts()"
+        [class.selected]="selectedProduct()?.id === prod.id"
+        [class.out-of-stock]="prod.quantity === 0"
+        (click)="prod.quantity > 0 ? selectProduct(prod) : null">
+        
+        <div class="prod-badge-row">
+          <span class="badge badge-primary">{{ prod.category }}</span>
+          <span class="badge" [class.badge-success]="prod.quantity > 5" [class.badge-warning]="prod.quantity > 0 && prod.quantity <= 5" [class.badge-danger]="prod.quantity === 0">
+            {{ prod.quantity === 0 ? 'Sold Out' : prod.quantity + ' Stock' }}
+          </span>
+        </div>
+
+        <h4 class="prod-title">{{ prod.name }}</h4>
+        <p class="prod-desc">{{ prod.description }}</p>
+        
+        <div class="prod-footer">
+          <span class="prod-price">${{ prod.price | number:'1.2-2' }}</span>
+          <button class="btn btn-secondary select-btn" [disabled]="prod.quantity === 0">
+            <span class="material-symbols-outlined">add_shopping_cart</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="filteredProducts().length === 0">
+      <span class="material-symbols-outlined empty-icon">sentiment_dissatisfied</span>
+      <h4>No Available Products</h4>
+      <p>Please add products in the inventory catalog first.</p>
+    </div>
+
+  </div>
+
+  <!-- Right Side: Checkout invoice -->
+  <div class="pos-invoice glass-panel">
+    
+    <div class="invoice-header">
+      <span class="material-symbols-outlined invoice-icon text-cyan">receipt_long</span>
+      <h3>Active Invoice</h3>
+    </div>
+
+    <!-- Transaction Notifications -->
+    <div class="alert alert-error" *ngIf="errorMessage()">
+      <span class="material-symbols-outlined">error</span>
+      <span class="alert-text">{{ errorMessage() }}</span>
+    </div>
+
+    <div class="alert alert-success" *ngIf="successMessage()">
+      <span class="material-symbols-outlined">check_circle</span>
+      <span class="alert-text">{{ successMessage() }}</span>
+    </div>
+
+    <!-- Invoice Details -->
+    <div class="invoice-body">
+      
+      <div class="empty-invoice" *ngIf="!selectedProduct()">
+        <span class="material-symbols-outlined cart-icon">shopping_basket</span>
+        <p>No product selected for sale.</p>
+        <span>Click on any catalog product to start checkout.</span>
+      </div>
+
+      <div class="invoice-details animate-fade-in" *ngIf="selectedProduct()">
+        
+        <div class="selected-product-info">
+          <h2>{{ selectedProduct()?.name }}</h2>
+          <p>{{ selectedProduct()?.category }} • ${{ selectedProduct()?.price | number:'1.2-2' }} / unit</p>
+        </div>
+
+        <!-- Quantity Adjusters -->
+        <div class="quantity-selector-section">
+          <label class="form-label">Quantity to Sell</label>
+          <div class="qty-control-wrapper">
+            <button type="button" class="btn-qty" (click)="adjustQuantity(-1)" [disabled]="isLoading()">
+              <span class="material-symbols-outlined">remove</span>
+            </button>
+            <span class="qty-display">{{ sellQuantity() }}</span>
+            <button type="button" class="btn-qty" (click)="adjustQuantity(1)" [disabled]="isLoading()">
+              <span class="material-symbols-outlined">add</span>
+            </button>
+          </div>
+          <span class="stock-available">Available stock: {{ selectedProduct()?.quantity }} unit(s)</span>
+        </div>
+
+        <!-- Summary list -->
+        <div class="price-summary">
+          <div class="summary-row">
+            <span>Price Subtotal</span>
+            <span>${{ totalCheckoutPrice() | number:'1.2-2' }}</span>
+          </div>
+          <div class="summary-row">
+            <span>Sales Tax (0%)</span>
+            <span>$0.00</span>
+          </div>
+          <div class="summary-row total-row">
+            <span>Grand Total</span>
+            <span class="text-cyan">${{ totalCheckoutPrice() | number:'1.2-2' }}</span>
+          </div>
+        </div>
+
+        <!-- Checkout Button -->
+        <button (click)="checkout()" class="btn btn-primary w-full checkout-btn" [disabled]="isLoading()">
+          <ng-container *ngIf="isLoading(); else checkoutText">
+            <div class="spinner"></div> Processing Transaction...
+          </ng-container>
+          <ng-template #checkoutText>
+            <span class="material-symbols-outlined">point_of_sale</span>
+            Complete Checkout
+          </ng-template>
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

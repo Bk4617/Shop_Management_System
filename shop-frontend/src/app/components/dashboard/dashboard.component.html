@@ -1,0 +1,147 @@
+<div class="dashboard-wrapper">
+
+  <!-- Statistics Grid -->
+  <div class="stats-grid">
+    
+    <!-- Total Products -->
+    <div class="glass-card stat-card">
+      <div class="stat-icon-wrapper primary-glow">
+        <span class="material-symbols-outlined stat-icon">inventory_2</span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Total Products</span>
+        <h3 class="stat-val">{{ totalProductsCount() }}</h3>
+      </div>
+    </div>
+
+    <!-- Out of Stock -->
+    <div class="glass-card stat-card">
+      <div class="stat-icon-wrapper danger-glow">
+        <span class="material-symbols-outlined stat-icon">production_quantity_limits</span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Out of Stock</span>
+        <h3 class="stat-val text-red">{{ outOfStockCount() }}</h3>
+      </div>
+    </div>
+
+    <!-- Low Stock warning -->
+    <div class="glass-card stat-card">
+      <div class="stat-icon-wrapper warning-glow">
+        <span class="material-symbols-outlined stat-icon">running_with_errors</span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Low Stock (≤ 5)</span>
+        <h3 class="stat-val text-yellow">{{ lowStockCount() }}</h3>
+      </div>
+    </div>
+
+    <!-- Total value -->
+    <div class="glass-card stat-card">
+      <div class="stat-icon-wrapper accent-glow">
+        <span class="material-symbols-outlined stat-icon">payments</span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Total Stock Value</span>
+        <h3 class="stat-val text-cyan">${{ totalInventoryValue() | number:'1.2-2' }}</h3>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Main Dashboard Sections -->
+  <div class="dashboard-sections">
+    
+    <!-- Left Column: Low Stock Alerts -->
+    <div class="glass-panel alert-section">
+      <div class="section-header">
+        <span class="material-symbols-outlined section-header-icon text-yellow">warning</span>
+        <h3>Critical Stock Alerts</h3>
+      </div>
+      
+      <div class="alert-content">
+        <div class="empty-state" *ngIf="lowStockProducts().length === 0">
+          <span class="material-symbols-outlined empty-icon text-green">check_circle</span>
+          <p>All stock levels are optimal. Excellent work!</p>
+        </div>
+
+        <div class="alerts-list" *ngIf="lowStockProducts().length > 0">
+          <div class="alert-item" *ngFor="let item of lowStockProducts()">
+            <div class="alert-item-info">
+              <span class="alert-item-name">{{ item.name }}</span>
+              <span class="alert-item-category">{{ item.category }}</span>
+            </div>
+            <div class="alert-item-status">
+              <span class="badge" [class.badge-danger]="item.quantity === 0" [class.badge-warning]="item.quantity > 0">
+                {{ item.quantity === 0 ? 'Out of Stock' : item.quantity + ' Units Left' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Quick Actions Shortcuts -->
+    <div class="glass-panel shortcuts-section">
+      <div class="section-header">
+        <span class="material-symbols-outlined section-header-icon text-cyan">bolt</span>
+        <h3>Quick Operations</h3>
+      </div>
+
+      <div class="shortcuts-grid">
+        <a routerLink="/products" class="glass-card shortcut-card">
+          <span class="material-symbols-outlined shortcut-icon primary-color">edit_square</span>
+          <h4>Manage Catalog</h4>
+          <p>Add, edit or delete catalog items</p>
+        </a>
+
+        <a routerLink="/sales" class="glass-card shortcut-card">
+          <span class="material-symbols-outlined shortcut-icon secondary-color">shopping_cart_checkout</span>
+          <h4>Sell Product</h4>
+          <p>Process customer checkout sale</p>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Full-Width: Recent Sales History -->
+  <div class="glass-panel sales-history-section animate-fade-in">
+    <div class="section-header">
+      <span class="material-symbols-outlined section-header-icon text-cyan">history</span>
+      <h3>Recent Sales History Log</h3>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="inventory-table sales-table" *ngIf="salesRecords().length > 0; else noSales">
+        <thead>
+          <tr>
+            <th>Transaction ID</th>
+            <th>Product Name</th>
+            <th>Quantity Sold</th>
+            <th>Total Price</th>
+            <th>Date & Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let record of salesRecords()" class="inventory-row">
+            <td><span class="text-muted">TXN-#{{ record.id }}</span></td>
+            <td><strong>{{ record.productName }}</strong></td>
+            <td><span class="badge badge-warning">{{ record.quantity }} sold</span></td>
+            <td><strong class="text-cyan">${{ record.totalPrice | number:'1.2-2' }}</strong></td>
+            <td><span class="text-muted">{{ record.saleDate | date:'medium' }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #noSales>
+        <div class="empty-state">
+          <span class="material-symbols-outlined empty-icon">receipt_long</span>
+          <h4>No Sales Logged Yet</h4>
+          <p>Complete checkout transactions in the POS Sales terminal to generate records.</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+</div>

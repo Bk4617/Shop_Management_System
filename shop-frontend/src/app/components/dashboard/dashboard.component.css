@@ -1,0 +1,235 @@
+.dashboard-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Stats Cards */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 20px;
+}
+
+.stat-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stat-icon {
+  font-size: 1.6rem;
+}
+
+/* Neon Glows for Stat Icons */
+.primary-glow {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--color-primary);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+.danger-glow {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-danger);
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.warning-glow {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--color-warning);
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.2);
+}
+
+.accent-glow {
+  background: rgba(6, 182, 212, 0.1);
+  color: var(--color-secondary);
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.15);
+  border-color: rgba(6, 182, 212, 0.2);
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.stat-val {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+/* Colors */
+.text-red { color: #fca5a5; }
+.text-yellow { color: #fde68a; }
+.text-cyan { color: #22d3ee; }
+
+/* Dashboard Sections */
+.dashboard-sections {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 24px;
+}
+
+.alert-section, .shortcuts-section {
+  padding: 24px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border-glass);
+  padding-bottom: 12px;
+}
+
+.section-header-icon {
+  font-size: 1.4rem;
+}
+
+.section-header h3 {
+  font-size: 1.15rem;
+}
+
+/* Alert content */
+.alert-content {
+  min-height: 200px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+
+.text-green { color: var(--color-success); }
+
+.alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.alert-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-glass);
+  border-radius: 10px;
+  transition: all var(--transition-fast);
+}
+
+.alert-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.alert-item-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.alert-item-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.alert-item-category {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Shortcuts */
+.shortcuts-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.shortcut-card {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  text-decoration: none;
+  text-align: left;
+}
+
+.shortcut-icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+.primary-color { color: var(--color-primary); }
+.secondary-color { color: var(--color-secondary); }
+
+.shortcut-card h4 {
+  font-size: 1.05rem;
+  margin-bottom: 4px;
+}
+
+.shortcut-card p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-sections {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Sales History Section */
+.sales-history-section {
+  margin-top: 24px;
+  padding: 24px;
+}
+
+.sales-history-section .table-wrapper {
+  box-shadow: none;
+  border-radius: 12px !important;
+}
+
+.sales-history-section .empty-state {
+  padding: 40px;
+  text-align: center;
+  height: auto;
+}
+
+.sales-history-section .empty-icon {
+  font-size: 3rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}

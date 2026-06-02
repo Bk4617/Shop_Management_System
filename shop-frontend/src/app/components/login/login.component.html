@@ -1,0 +1,153 @@
+<div class="login-wrapper flex-center">
+  <!-- Glowing Background Blobs -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <div class="glass-panel login-card animate-fade-in">
+    
+    <!-- Header Brand -->
+    <div class="brand-section">
+      <span class="material-symbols-outlined logo-icon">storefront</span>
+      <h2 class="text-gradient-primary">Apex Shop Portal</h2>
+      <p>Microservice Shop Management</p>
+    </div>
+
+    <!-- Mode Selector Tab -->
+    <div class="tab-container">
+      <button 
+        type="button" 
+        class="tab-btn" 
+        [class.active]="isLoginMode()" 
+        (click)="toggleMode(true)">
+        Sign In
+      </button>
+      <button 
+        type="button" 
+        class="tab-btn" 
+        [class.active]="!isLoginMode()" 
+        (click)="toggleMode(false)">
+        Register
+      </button>
+    </div>
+
+    <!-- Alert Messages -->
+    <div class="alert alert-error" *ngIf="errorMessage()">
+      <span class="material-symbols-outlined">error</span>
+      <span class="alert-text">{{ errorMessage() }}</span>
+    </div>
+
+    <div class="alert alert-success" *ngIf="successMessage()">
+      <span class="material-symbols-outlined">check_circle</span>
+      <span class="alert-text">{{ successMessage() }}</span>
+    </div>
+
+    <!-- Form Section -->
+    <form (ngSubmit)="onSubmit()" #authForm="ngForm">
+      
+      <!-- Username Field -->
+      <div class="form-group">
+        <label class="form-label" for="username">Username</label>
+        <div class="input-with-icon" [class.has-error]="usernameError()">
+          <span class="material-symbols-outlined input-icon">person</span>
+          <input 
+            type="text" 
+            id="username"
+            name="name"
+            class="form-control" 
+            placeholder="Enter username" 
+            required 
+            [ngModel]="nameSignal()"
+            (ngModelChange)="nameSignal.set($event)">
+        </div>
+        <div class="validation-message animate-fade-in" *ngIf="usernameError()">
+          <span class="material-symbols-outlined error-small-icon">warning</span>
+          <span>{{ usernameError() }}</span>
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <div class="input-with-icon" [class.has-error]="passwordError()">
+          <span class="material-symbols-outlined input-icon">lock</span>
+          <input 
+            [type]="showPassword() ? 'text' : 'password'" 
+            id="password"
+            name="password"
+            class="form-control" 
+            placeholder="Enter password" 
+            required 
+            [ngModel]="passwordSignal()"
+            (ngModelChange)="passwordSignal.set($event)"
+            style="padding-right: 44px;">
+          
+          <!-- Show/Hide Password Toggle button -->
+          <button 
+            type="button" 
+            class="password-toggle-btn flex-center"
+            (click)="togglePasswordVisibility()" 
+            [title]="showPassword() ? 'Hide Password' : 'Show Password'">
+            <span class="material-symbols-outlined">{{ showPassword() ? 'visibility_off' : 'visibility' }}</span>
+          </button>
+        </div>
+
+        <!-- Password Strength Meter (Only shown in Register Mode when typing) -->
+        <ng-container *ngIf="!isLoginMode() && passwordSignal().length > 0">
+          <div class="strength-meter animate-fade-in">
+            <div class="strength-bar-bg">
+              <div class="strength-bar-fill" [style.width.%]="passwordStrength().score * 33.3" [style.background-color]="passwordStrength().color"></div>
+            </div>
+            <span class="strength-label" [style.color]="passwordStrength().color">Strength: {{ passwordStrength().label }}</span>
+          </div>
+        </ng-container>
+
+        <div class="validation-message animate-fade-in" *ngIf="passwordError()">
+          <span class="material-symbols-outlined error-small-icon">warning</span>
+          <span>{{ passwordError() }}</span>
+        </div>
+      </div>
+
+      <!-- Contact Field (Registration Only) -->
+      <div class="form-group animate-fade-in" *ngIf="!isLoginMode()">
+        <label class="form-label" for="contact">Contact Number</label>
+        <div class="input-with-icon" [class.has-error]="contactError()">
+          <span class="material-symbols-outlined input-icon">call</span>
+          <input 
+            type="text" 
+            id="contact"
+            name="contact"
+            class="form-control" 
+            placeholder="Enter mobile number" 
+            required 
+            [ngModel]="contactSignal()"
+            (ngModelChange)="contactSignal.set($event)">
+        </div>
+        <div class="validation-message animate-fade-in" *ngIf="contactError()">
+          <span class="material-symbols-outlined error-small-icon">warning</span>
+          <span>{{ contactError() }}</span>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <button type="submit" class="btn btn-primary w-full submit-btn" [disabled]="isLoading() || isFormInvalid()">
+        <ng-container *ngIf="isLoading(); else buttonContent">
+          <div class="spinner"></div>
+          Processing...
+        </ng-container>
+        <ng-template #buttonContent>
+          <span class="material-symbols-outlined">key</span>
+          {{ isLoginMode() ? 'Sign In to Portal' : 'Register Account' }}
+        </ng-template>
+      </button>
+
+    </form>
+
+    <!-- Footer Description -->
+    <div class="card-footer">
+      <span class="material-symbols-outlined">security</span>
+      <span>Secured session connection</span>
+    </div>
+
+  </div>
+</div>

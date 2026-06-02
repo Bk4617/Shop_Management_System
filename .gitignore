@@ -1,0 +1,36 @@
+# Root GitIgnore for Shop_Management_System
+
+# Compiled Java / Maven output
+**/target/
+**/.mvn/
+**/mvnw
+**/mvnw.cmd
+
+# Node / Angular output
+**/node_modules/
+**/dist/
+**/.angular/
+**/tmp/
+**/out-tsc/
+**/bazel-out/
+**/npm-debug.log
+**/yarn-error.log
+
+# IDEs and Editors
+.idea/
+**/.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+**/.vscode/
+.settings/
+**/.settings/
+.project
+.classpath
+.factorypath
+.apt_generated
+
+# System files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,275 @@
+.layout-container {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100vh;
+  background: radial-gradient(circle at 50% 0%, #161e38 0%, var(--bg-primary) 70%);
+}
+
+/* Sidebar Styling */
+.sidebar {
+  height: calc(100vh - 40px);
+  margin: 20px;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px !important;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 35px;
+}
+
+.sidebar-brand .logo-icon {
+  font-size: 2.2rem;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.4));
+}
+
+.brand-text h3 {
+  font-size: 1.15rem;
+  line-height: 1.2;
+}
+
+.brand-text span {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* User Profile */
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  margin-bottom: 30px;
+}
+
+.avatar span {
+  font-size: 2.5rem;
+  color: var(--color-primary);
+  display: block;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.user-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.user-role {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Nav Menu */
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all var(--transition-fast);
+  border: 1px solid transparent;
+}
+
+.nav-item span.material-symbols-outlined {
+  font-size: 1.35rem;
+  transition: transform var(--transition-fast);
+}
+
+.nav-item:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.nav-item:hover span.material-symbols-outlined {
+  transform: translateX(2px);
+}
+
+.nav-item.active {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(6, 182, 212, 0.05) 100%);
+  color: #ffffff;
+  border-color: var(--color-primary-glow);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+}
+
+.nav-item.active span.material-symbols-outlined {
+  color: var(--color-secondary);
+}
+
+.sidebar-footer {
+  margin-top: auto;
+}
+
+.logout-btn {
+  justify-content: center;
+  padding: 12px;
+}
+
+/* Main Content Area */
+.main-content {
+  padding: 20px 20px 20px 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.main-header {
+  padding: 20px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  border-radius: 16px !important;
+}
+
+.header-welcome h2 {
+  font-size: 1.4rem;
+  margin-bottom: 2px;
+}
+
+.header-welcome p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--color-success);
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 4px;
+  box-shadow: 0 0 8px var(--color-success);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  50% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.8; }
+}
+
+.router-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .layout-container {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    display: none; /* simple hidden for mobile, in absolute layout we would do drawers */
+  }
+  .main-content {
+    padding: 20px;
+  }
+}
+
+/* Admin Profile Sidebar Item */
+.user-profile.clickable {
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.user-profile.clickable:hover {
+  background: rgba(99, 102, 241, 0.08);
+  border-color: var(--color-primary-glow);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.05);
+}
+
+.user-profile.clickable:hover .settings-icon {
+  transform: rotate(45deg);
+  color: var(--color-secondary) !important;
+}
+
+.settings-icon {
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.header-welcome .clickable {
+  cursor: pointer;
+  text-decoration: underline dotted rgba(99, 102, 241, 0.4);
+  transition: all var(--transition-fast);
+}
+
+.header-welcome .clickable:hover {
+  filter: brightness(1.2);
+  text-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+}
+
+/* Profile Modal Specifics */
+.profile-modal {
+  max-width: 440px !important;
+}
+
+.profile-details-display {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 10px 0;
+}
+
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+.profile-row .detail-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.profile-row .detail-val {
+  color: #ffffff;
+}
+
+.profile-divider {
+  height: 1px;
+  background: var(--border-glass);
+  margin: 20px 0;
+}
+
+.form-section-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #ffffff;
+}

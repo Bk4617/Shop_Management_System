@@ -1,0 +1,195 @@
+<div class="inventory-container">
+
+  <!-- Control Actions Bar -->
+  <div class="control-bar glass-panel">
+    
+    <!-- Search -->
+    <div class="search-box">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input 
+        type="text" 
+        class="form-control search-input" 
+        placeholder="Search by name or description..."
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)">
+    </div>
+
+    <!-- Category Filter -->
+    <div class="filter-box">
+      <span class="material-symbols-outlined filter-icon">filter_alt</span>
+      <select 
+        class="form-control select-input"
+        [ngModel]="selectedCategory()"
+        (ngModelChange)="selectedCategory.set($event)">
+        <option *ngFor="let cat of categories()" [value]="cat">{{ cat }}</option>
+      </select>
+    </div>
+
+    <!-- Add Button -->
+    <button (click)="openAddModal()" class="btn btn-primary add-product-btn">
+      <span class="material-symbols-outlined">add_box</span>
+      <span>Add Product</span>
+    </button>
+
+  </div>
+
+  <!-- Inventory Table List -->
+  <div class="table-wrapper glass-panel">
+    <table class="inventory-table" *ngIf="filteredProducts().length > 0; else noProducts">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Product Name</th>
+          <th>Description</th>
+          <th>Category</th>
+          <th>Unit Price</th>
+          <th>Stock Quantity</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let prod of filteredProducts()" class="inventory-row">
+          <td><span class="text-muted">#{{ prod.id }}</span></td>
+          <td class="name-cell"><strong>{{ prod.name }}</strong></td>
+          <td class="desc-cell">{{ prod.description }}</td>
+          <td><span class="badge badge-primary">{{ prod.category }}</span></td>
+          <td><strong class="text-cyan">${{ prod.price | number:'1.2-2' }}</strong></td>
+          <td>
+            <div class="quantity-wrapper">
+              <span class="quantity-count">{{ prod.quantity }}</span>
+              <span 
+                class="badge" 
+                [class.badge-success]="prod.quantity > 5" 
+                [class.badge-warning]="prod.quantity > 0 && prod.quantity <= 5"
+                [class.badge-danger]="prod.quantity === 0">
+                {{ prod.quantity === 0 ? 'Out of Stock' : (prod.quantity <= 5 ? 'Low Stock' : 'In Stock') }}
+              </span>
+            </div>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button (click)="openEditModal(prod)" class="action-btn edit-btn" title="Edit Product">
+                <span class="material-symbols-outlined">edit</span>
+              </button>
+              <button (click)="deleteProduct(prod.id!)" class="action-btn delete-btn" title="Delete Product">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #noProducts>
+      <div class="empty-state">
+        <span class="material-symbols-outlined empty-icon">inventory</span>
+        <h4>No Products Found</h4>
+        <p>Try refining your search or add a new product to populate the catalog.</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Add / Edit Modal Overlay -->
+  <div class="modal-backdrop" *ngIf="isModalOpen()" (click)="closeModal()">
+    <div class="modal-card glass-panel" (click)="$event.stopPropagation()">
+      
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h3 class="text-gradient-primary">{{ isEditMode() ? 'Edit Inventory Product' : 'Add New Inventory Product' }}</h3>
+        <button (click)="closeModal()" class="close-btn">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Error Alert -->
+      <div class="alert alert-error" *ngIf="errorMessage()">
+        <span class="material-symbols-outlined">error</span>
+        <span class="alert-text">{{ errorMessage() }}</span>
+      </div>
+
+      <!-- Modal Body Form -->
+      <form (ngSubmit)="saveProduct()">
+        
+        <div class="form-group">
+          <label class="form-label" for="prodName">Product Name</label>
+          <input 
+            type="text" 
+            id="prodName" 
+            name="name"
+            class="form-control" 
+            placeholder="Enter product title" 
+            required 
+            [(ngModel)]="formProduct().name">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="prodDesc">Description</label>
+          <textarea 
+            id="prodDesc" 
+            name="description"
+            class="form-control text-area" 
+            placeholder="Short details about the product..." 
+            rows="3"
+            [(ngModel)]="formProduct().description"></textarea>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" for="prodCategory">Category</label>
+            <input 
+              type="text" 
+              id="prodCategory" 
+              name="category"
+              class="form-control" 
+              placeholder="e.g. Electronics" 
+              required 
+              [(ngModel)]="formProduct().category">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="prodPrice">Price ($)</label>
+            <input 
+              type="number" 
+              id="prodPrice" 
+              name="price"
+              class="form-control" 
+              placeholder="0.00" 
+              step="0.01" 
+              required 
+              [(ngModel)]="formProduct().price">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="prodQuantity">Initial Quantity</label>
+          <input 
+            type="number" 
+            id="prodQuantity" 
+            name="quantity"
+            class="form-control" 
+            placeholder="0" 
+            required 
+            [(ngModel)]="formProduct().quantity">
+        </div>
+
+        <!-- Submit actions -->
+        <div class="modal-actions">
+          <button type="button" (click)="closeModal()" class="btn btn-secondary" [disabled]="isLoading()">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="isLoading()">
+            <ng-container *ngIf="isLoading(); else btnText">
+              Saving...
+            </ng-container>
+            <ng-template #btnText>
+              {{ isEditMode() ? 'Save Changes' : 'Add to Catalog' }}
+            </ng-template>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+</div>
