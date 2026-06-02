@@ -71,4 +71,22 @@ export class AuthService {
       })
     );
   }
+
+  // Update Profile (Username, Contact, Password)
+  updateProfile(currentUsername: string, updatedUser: User): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/update-profile`, updatedUser, {
+      params: { currentUsername }
+    }).pipe(
+      tap(result => {
+        if (result) {
+          const savedUser = { ...result };
+          if (updatedUser.password) {
+            savedUser.password = updatedUser.password;
+          }
+          localStorage.setItem('currentUser', JSON.stringify(savedUser));
+          this.currentUserSignal.set(savedUser);
+        }
+      })
+    );
+  }
 }

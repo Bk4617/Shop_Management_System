@@ -108,6 +108,27 @@
         </div>
       </div>
 
+      <!-- Confirm Password Field (Registration Only) -->
+      <div class="form-group animate-fade-in" *ngIf="!isLoginMode()">
+        <label class="form-label" for="confirmPassword">Confirm Password</label>
+        <div class="input-with-icon" [class.has-error]="confirmPasswordError()">
+          <span class="material-symbols-outlined input-icon">lock</span>
+          <input 
+            type="password" 
+            id="confirmPassword"
+            name="confirmPassword"
+            class="form-control" 
+            placeholder="Confirm password" 
+            required 
+            [ngModel]="confirmPasswordSignal()"
+            (ngModelChange)="confirmPasswordSignal.set($event)">
+        </div>
+        <div class="validation-message animate-fade-in" *ngIf="confirmPasswordError()">
+          <span class="material-symbols-outlined error-small-icon">warning</span>
+          <span>{{ confirmPasswordError() }}</span>
+        </div>
+      </div>
+
       <!-- Contact Field (Registration Only) -->
       <div class="form-group animate-fade-in" *ngIf="!isLoginMode()">
         <label class="form-label" for="contact">Contact Number</label>
@@ -130,7 +151,7 @@
       </div>
 
       <!-- Action Button -->
-      <button type="submit" class="btn btn-primary w-full submit-btn" [disabled]="isLoading() || isFormInvalid()">
+      <button type="submit" class="btn btn-primary w-full submit-btn" [disabled]="isLoading()">
         <ng-container *ngIf="isLoading(); else buttonContent">
           <div class="spinner"></div>
           Processing...

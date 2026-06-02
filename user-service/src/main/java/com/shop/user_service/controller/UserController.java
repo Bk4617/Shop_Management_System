@@ -43,4 +43,15 @@ public class UserController {
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "User not found"));
     }
+
+    @PutMapping("/update-profile")
+    public ResponseEntity<?> updateProfile(
+            @RequestParam String currentUsername,
+            @RequestBody UserEntity updatedUser) {
+        UserEntity result = userService.updateProfile(currentUsername, updatedUser);
+        if (result == null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists or user not found");
+        }
+        return ResponseEntity.ok(result);
+    }
 }

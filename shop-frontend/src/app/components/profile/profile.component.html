@@ -1,0 +1,169 @@
+<div class="profile-container animate-fade-in">
+  <!-- Title Header -->
+  <div class="profile-header glass-panel">
+    <div class="header-welcome">
+      <h2 class="text-gradient-primary">Admin Profile Settings</h2>
+      <p>Manage and update your security credentials and profile information</p>
+    </div>
+    <div class="header-status">
+      <span class="badge badge-success">
+        <span class="status-dot"></span> System Admin
+      </span>
+    </div>
+  </div>
+
+  <div class="profile-layout grid-container">
+    
+    <!-- Profile Info Card (Readonly Summary) -->
+    <div class="glass-panel info-card flex-center-column">
+      <div class="avatar-large">
+        <span class="material-symbols-outlined">admin_panel_settings</span>
+      </div>
+      <h3>{{ currentUser()?.name }}</h3>
+      <span class="badge badge-primary">System Administrator</span>
+      
+      <div class="metadata-list">
+        <div class="meta-item">
+          <span class="material-symbols-outlined">call</span>
+          <span>{{ currentUser()?.contact || 'No contact configured' }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="material-symbols-outlined">security</span>
+          <span>Password encrypted</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Edit Form Card -->
+    <div class="glass-panel form-card">
+      <h3 class="card-title text-gradient-primary">Edit Profile Details</h3>
+      
+      <!-- Error / Success Alert Messages -->
+      <div class="alert alert-error animate-fade-in" *ngIf="errorMessage()">
+        <span class="material-symbols-outlined">error</span>
+        <span class="alert-text">{{ errorMessage() }}</span>
+      </div>
+
+      <div class="alert alert-success animate-fade-in" *ngIf="successMessage()">
+        <span class="material-symbols-outlined">check_circle</span>
+        <span class="alert-text">{{ successMessage() }}</span>
+      </div>
+
+      <form (ngSubmit)="onSubmit()" #profileForm="ngForm">
+        
+        <!-- Username Field -->
+        <div class="form-group">
+          <label class="form-label" for="username">Username</label>
+          <div class="input-with-icon" [class.has-error]="usernameError()">
+            <span class="material-symbols-outlined input-icon">person</span>
+            <input 
+              type="text" 
+              id="username"
+              name="username"
+              class="form-control" 
+              placeholder="Enter username" 
+              required 
+              [ngModel]="nameSignal()"
+              (ngModelChange)="nameSignal.set($event)">
+          </div>
+          <div class="validation-message animate-fade-in" *ngIf="usernameError()">
+            <span class="material-symbols-outlined error-small-icon">warning</span>
+            <span>{{ usernameError() }}</span>
+          </div>
+        </div>
+
+        <!-- Contact Field -->
+        <div class="form-group">
+          <label class="form-label" for="contact">Contact Number</label>
+          <div class="input-with-icon" [class.has-error]="contactError()">
+            <span class="material-symbols-outlined input-icon">call</span>
+            <input 
+              type="text" 
+              id="contact"
+              name="contact"
+              class="form-control" 
+              placeholder="Enter mobile number" 
+              required 
+              [ngModel]="contactSignal()"
+              (ngModelChange)="contactSignal.set($event)">
+          </div>
+          <div class="validation-message animate-fade-in" *ngIf="contactError()">
+            <span class="material-symbols-outlined error-small-icon">warning</span>
+            <span>{{ contactError() }}</span>
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <!-- New Password Field -->
+        <div class="form-group">
+          <label class="form-label" for="password">New Password (leave blank to keep current)</label>
+          <div class="input-with-icon" [class.has-error]="passwordError()">
+            <span class="material-symbols-outlined input-icon">lock</span>
+            <input 
+              [type]="showPassword() ? 'text' : 'password'" 
+              id="password"
+              name="password"
+              class="form-control" 
+              placeholder="Enter new password (optional)" 
+              [ngModel]="passwordSignal()"
+              (ngModelChange)="passwordSignal.set($event)"
+              style="padding-right: 44px;">
+            
+            <button 
+              type="button" 
+              class="password-toggle-btn flex-center"
+              (click)="togglePasswordVisibility()" 
+              [title]="showPassword() ? 'Hide Password' : 'Show Password'">
+              <span class="material-symbols-outlined">{{ showPassword() ? 'visibility_off' : 'visibility' }}</span>
+            </button>
+          </div>
+          <div class="validation-message animate-fade-in" *ngIf="passwordError()">
+            <span class="material-symbols-outlined error-small-icon">warning</span>
+            <span>{{ passwordError() }}</span>
+          </div>
+        </div>
+
+        <!-- Confirm New Password Field -->
+        <div class="form-group animate-fade-in" *ngIf="passwordSignal().length > 0">
+          <label class="form-label" for="confirmPassword">Confirm New Password</label>
+          <div class="input-with-icon" [class.has-error]="confirmPasswordError()">
+            <span class="material-symbols-outlined input-icon">lock</span>
+            <input 
+              type="password" 
+              id="confirmPassword"
+              name="confirmPassword"
+              class="form-control" 
+              placeholder="Confirm new password" 
+              required 
+              [ngModel]="confirmPasswordSignal()"
+              (ngModelChange)="confirmPasswordSignal.set($event)">
+          </div>
+          <div class="validation-message animate-fade-in" *ngIf="confirmPasswordError()">
+            <span class="material-symbols-outlined error-small-icon">warning</span>
+            <span>{{ confirmPasswordError() }}</span>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button type="button" (click)="cancel()" class="btn btn-secondary" [disabled]="isLoading()">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="isLoading()">
+            <ng-container *ngIf="isLoading(); else buttonContent">
+              <div class="spinner"></div>
+              Updating Profile...
+            </ng-container>
+            <ng-template #buttonContent>
+              <span class="material-symbols-outlined">save</span>
+              Save Changes
+            </ng-template>
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</div>

@@ -25,22 +25,40 @@ export class LoginComponent {
   // Form Inputs using Signals
   protected readonly nameSignal = signal('');
   protected readonly passwordSignal = signal('');
+  protected readonly confirmPasswordSignal = signal('');
   protected readonly contactSignal = signal('');
 
-  // Username validation
+  // Username validation: letters only, min 3 characters
   protected readonly usernameError = computed(() => {
     const val = this.nameSignal().trim();
     if (!val) return null;
     if (val.length < 3) return 'Username must be at least 3 characters';
-    if (!/^[a-zA-Z0-9_]+$/.test(val)) return 'Username must be alphanumeric or underscores only';
+    if (!/^[a-zA-Z]+$/.test(val)) return 'Username must consist of only letters (no numbers or special characters)';
     return null;
   });
 
-  // Password validation
+  // Password validation: 8 chars, 1 number, 1 upper, 1 special char (only in register mode)
   protected readonly passwordError = computed(() => {
     const val = this.passwordSignal();
     if (!val) return null;
-    if (val.length < 6) return 'Password must be at least 6 characters';
+    if (this.isLoginMode()) {
+      if (val.length < 6) return 'Password must be at least 6 characters';
+    } else {
+      if (val.length < 8) return 'Password must be at least 8 characters';
+      if (!/[A-Z]/.test(val)) return 'Password must contain at least one uppercase letter';
+      if (!/[0-9]/.test(val)) return 'Password must contain at least one number';
+      if (!/[^A-Za-z0-9]/.test(val)) return 'Password must contain at least one special character';
+    }
+    return null;
+  });
+
+  // Confirm password validation
+  protected readonly confirmPasswordError = computed(() => {
+    if (this.isLoginMode()) return null;
+    const pass = this.passwordSignal();
+    const conf = this.confirmPasswordSignal();
+    if (!conf) return null;
+    if (pass !== conf) return 'Passwords do not match';
     return null;
   });
 
@@ -50,9 +68,9 @@ export class LoginComponent {
     if (!val) return { score: 0, label: '', color: 'transparent' };
     
     let score = 0;
-    if (val.length >= 6) score++;
+    if (val.length >= 8) score++;
     if (/[A-Z]/.test(val)) score++;
-    if (/[0-9]/.test(val) || /[^A-Za-z0-9]/.test(val)) score++;
+    if (/[0-9]/.test(val) && /[^A-Za-z0-9]/.test(val)) score++;
 
     if (score === 1) return { score: 1, label: 'Weak', color: '#ef4444' };
     if (score === 2) return { score: 2, label: 'Medium', color: '#eab308' };
@@ -60,28 +78,18 @@ export class LoginComponent {
     return { score: 0, label: '', color: 'transparent' };
   });
 
-  // Contact number validation
+  // Contact number validation: starts with 6-9, exactly 10 digits
   protected readonly contactError = computed(() => {
     if (this.isLoginMode()) return null;
     const val = this.contactSignal().trim();
     if (!val) return null;
-    if (!/^\d{10}$/.test(val)) return 'Contact number must be exactly 10 digits';
+    if (!/^[6-9]\d{9}$/.test(val)) return 'Contact number must start with 6-9 and be exactly 10 digits';
     return null;
   });
 
-  // Check form validity
+  // Check form validity (unused for disabling, we handle in onSubmit to show error alerts)
   protected readonly isFormInvalid = computed(() => {
-    const name = this.nameSignal().trim();
-    const pass = this.passwordSignal();
-    if (this.isLoginMode()) {
-      return !name || !pass || this.usernameError() !== null || this.passwordError() !== null;
-    } else {
-      const contact = this.contactSignal().trim();
-      return !name || !pass || !contact || 
-             this.usernameError() !== null || 
-             this.passwordError() !== null || 
-             this.contactError() !== null;
-    }
+    return false;
   });
 
   constructor() {
@@ -106,6 +114,7 @@ export class LoginComponent {
   resetForm(): void {
     this.nameSignal.set('');
     this.passwordSignal.set('');
+    this.confirmPasswordSignal.set('');
     this.contactSignal.set('');
   }
 
@@ -113,35 +122,22 @@ export class LoginComponent {
   onSubmit(): void {
     const name = this.nameSignal().trim();
     const password = this.passwordSignal();
+    const confirmPassword = this.confirmPasswordSignal();
     const contact = this.contactSignal().trim();
-
-    if (!name || !password) {
-      this.errorMessage.set('Username and Password are required');
-      return;
-    }
-
-    if (!this.isLoginMode() && !contact) {
-      this.errorMessage.set('Contact number is required');
-      return;
-    }
-
-    if (this.isFormInvalid()) {
-      this.errorMessage.set('Please fix form validation errors before submitting.');
-      return;
-    }
 
     this.errorMessage.set(null);
     this.successMessage.set(null);
-    this.isLoading.set(true);
-
-    const payload: User = {
-      name,
-      password,
-      contact: this.isLoginMode() ? undefined : contact
-    };
 
     if (this.isLoginMode()) {
-      // Login flow
+      // Login validation
+      if (!name || !password) {
+        this.errorMessage.set('Username and Password are required');
+        return;
+      }
+
+      this.isLoading.set(true);
+      const payload: User = { name, password };
+
       this.authService.login(payload).subscribe({
         next: (user) => {
           this.isLoading.set(false);
@@ -162,7 +158,56 @@ export class LoginComponent {
         }
       });
     } else {
-      // Register flow
+      // Register validation
+      // 1. Check if any field is not entered
+      if (!name || !password || !confirmPassword || !contact) {
+        this.errorMessage.set('Invalid account creation: all fields must be entered.');
+        return;
+      }
+
+      // 2. Validate Username (letters only)
+      if (!/^[a-zA-Z]+$/.test(name)) {
+        this.errorMessage.set('Username must consist of only letters (no special characters or numbers).');
+        return;
+      }
+      if (name.length < 3) {
+        this.errorMessage.set('Username must be at least 3 characters long.');
+        return;
+      }
+
+      // 3. Validate Password (8 chars, 1 number, 1 upper case, 1 special char)
+      if (password.length < 8) {
+        this.errorMessage.set('Password must be at least 8 characters long.');
+        return;
+      }
+      if (!/[A-Z]/.test(password)) {
+        this.errorMessage.set('Password must contain at least one uppercase letter.');
+        return;
+      }
+      if (!/[0-9]/.test(password)) {
+        this.errorMessage.set('Password must contain at least one number.');
+        return;
+      }
+      if (!/[^A-Za-z0-9]/.test(password)) {
+        this.errorMessage.set('Password must contain at least one special character.');
+        return;
+      }
+
+      // 4. Validate Passwords match
+      if (password !== confirmPassword) {
+        this.errorMessage.set('Passwords do not match.');
+        return;
+      }
+
+      // 5. Validate Contact number (starts with 6-9, exactly 10 digits)
+      if (!/^[6-9]\d{9}$/.test(contact)) {
+        this.errorMessage.set('Contact number must start with 6-9 and be exactly 10 digits.');
+        return;
+      }
+
+      this.isLoading.set(true);
+      const payload: User = { name, password, contact };
+
       this.authService.register(payload).subscribe({
         next: (user) => {
           this.isLoading.set(false);
@@ -186,3 +231,4 @@ export class LoginComponent {
     }
   }
 }
+

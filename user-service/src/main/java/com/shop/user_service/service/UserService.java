@@ -45,4 +45,27 @@ public class UserService {
         }
         return false;
     }
+
+    // Update Profile (Username, Contact, Password)
+    public UserEntity updateProfile(String currentUsername, UserEntity updatedUser) {
+        UserEntity existing = userRepository.findFirstByName(currentUsername);
+        if (existing == null) {
+            return null;
+        }
+
+        // If username is changing, verify it is not already taken
+        if (!existing.getName().equalsIgnoreCase(updatedUser.getName())) {
+            if (userRepository.existsByName(updatedUser.getName())) {
+                return null;
+            }
+        }
+
+        existing.setName(updatedUser.getName());
+        existing.setContact(updatedUser.getContact());
+        if (updatedUser.getPassword() != null && !updatedUser.getPassword().trim().isEmpty()) {
+            existing.setPassword(updatedUser.getPassword());
+        }
+
+        return userRepository.save(existing);
+    }
 }
