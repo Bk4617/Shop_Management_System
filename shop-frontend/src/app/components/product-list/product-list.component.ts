@@ -98,6 +98,16 @@ export class ProductListComponent implements OnInit {
       return;
     }
 
+    if (product.quantity > 5000) {
+      this.errorMessage.set('Quantity cannot exceed the maximum limit of 5,000 units');
+      return;
+    }
+
+    if (product.price > 1000000000) {
+      this.errorMessage.set('Price cannot exceed the maximum limit of 100 Crores (₹1,000,000,000)');
+      return;
+    }
+
     this.isLoading.set(true);
     this.errorMessage.set(null);
 

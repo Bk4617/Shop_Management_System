@@ -37,7 +37,7 @@
         <p class="prod-desc">{{ prod.description }}</p>
         
         <div class="prod-footer">
-          <span class="prod-price">${{ prod.price | number:'1.2-2' }}</span>
+          <span class="prod-price">₹{{ prod.price | number:'1.2-2' }}</span>
           <button class="btn btn-secondary select-btn" [disabled]="prod.quantity === 0">
             <span class="material-symbols-outlined">add_shopping_cart</span>
           </button>
@@ -86,7 +86,7 @@
         
         <div class="selected-product-info">
           <h2>{{ selectedProduct()?.name }}</h2>
-          <p>{{ selectedProduct()?.category }} • ${{ selectedProduct()?.price | number:'1.2-2' }} / unit</p>
+          <p>{{ selectedProduct()?.category }} • ₹{{ selectedProduct()?.price | number:'1.2-2' }} / unit</p>
         </div>
 
         <!-- Quantity Adjusters -->
@@ -108,15 +108,15 @@
         <div class="price-summary">
           <div class="summary-row">
             <span>Price Subtotal</span>
-            <span>${{ totalCheckoutPrice() | number:'1.2-2' }}</span>
+            <span>₹{{ totalCheckoutPrice() | number:'1.2-2' }}</span>
           </div>
           <div class="summary-row">
             <span>Sales Tax (0%)</span>
-            <span>$0.00</span>
+            <span>₹0.00</span>
           </div>
           <div class="summary-row total-row">
             <span>Grand Total</span>
-            <span class="text-cyan">${{ totalCheckoutPrice() | number:'1.2-2' }}</span>
+            <span class="text-cyan">₹{{ totalCheckoutPrice() | number:'1.2-2' }}</span>
           </div>
         </div>
 

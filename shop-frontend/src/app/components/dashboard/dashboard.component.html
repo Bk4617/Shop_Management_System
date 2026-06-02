@@ -43,7 +43,7 @@
       </div>
       <div class="stat-info">
         <span class="stat-label">Total Stock Value</span>
-        <h3 class="stat-val text-cyan">${{ totalInventoryValue() | number:'1.2-2' }}</h3>
+        <h3 class="stat-val text-cyan">₹{{ totalInventoryValue() | number:'1.2-2' }}</h3>
       </div>
     </div>
 
@@ -128,7 +128,7 @@
             <td><span class="text-muted">TXN-#{{ record.id }}</span></td>
             <td><strong>{{ record.productName }}</strong></td>
             <td><span class="badge badge-warning">{{ record.quantity }} sold</span></td>
-            <td><strong class="text-cyan">${{ record.totalPrice | number:'1.2-2' }}</strong></td>
+            <td><strong class="text-cyan">₹{{ record.totalPrice | number:'1.2-2' }}</strong></td>
             <td><span class="text-muted">{{ record.saleDate | date:'medium' }}</span></td>
           </tr>
         </tbody>
