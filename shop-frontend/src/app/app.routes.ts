@@ -5,6 +5,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ProductListComponent } from './components/product-list/product-list.component';
 import { SalesComponent } from './components/sales/sales.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import { SalesHistoryComponent } from './components/sales-history/sales-history.component';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -18,7 +19,8 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'products', component: ProductListComponent },
       { path: 'sales', component: SalesComponent },
-      { path: 'profile', component: ProfileComponent }
+      { path: 'profile', component: ProfileComponent },
+      { path: 'sales-history', component: SalesHistoryComponent }
     ]
   },
   { path: '**', redirectTo: 'dashboard' }

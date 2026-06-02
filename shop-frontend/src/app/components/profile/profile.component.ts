@@ -20,6 +20,7 @@ export class ProfileComponent {
   // Form signals
   protected readonly nameSignal = signal('');
   protected readonly contactSignal = signal('');
+  protected readonly currentPasswordSignal = signal('');
   protected readonly passwordSignal = signal('');
   protected readonly confirmPasswordSignal = signal('');
 
@@ -50,6 +51,24 @@ export class ProfileComponent {
     if (val.length < 3) return 'Username must be at least 3 characters';
     if (!/^[a-zA-Z]+$/.test(val)) return 'Username must consist of only letters (no numbers or special characters)';
     return null;
+  });
+
+  // Current password error computed
+  protected readonly currentPasswordError = computed(() => {
+    const val = this.currentPasswordSignal();
+    if (!val) return null;
+    const user = this.currentUser();
+    if (user && user.password !== val) {
+      return 'Incorrect current password';
+    }
+    return null;
+  });
+
+  // Checks if entered current password matches active session password
+  protected readonly isCurrentPasswordCorrect = computed(() => {
+    const val = this.currentPasswordSignal();
+    const user = this.currentUser();
+    return user ? user.password === val : false;
   });
 
   // Password validation: min 8, 1 upper, 1 number, 1 special char (if typed)
@@ -94,6 +113,7 @@ export class ProfileComponent {
 
     const name = this.nameSignal().trim();
     const contact = this.contactSignal().trim();
+    const currentPassword = this.currentPasswordSignal();
     const password = this.passwordSignal();
     const confirmPassword = this.confirmPasswordSignal();
 
@@ -122,8 +142,16 @@ export class ProfileComponent {
       return;
     }
 
-    // 4. Validate Password (if provided)
+    // 4. Validate Password update security (current password must match)
     if (password) {
+      if (!currentPassword) {
+        this.errorMessage.set('Please enter your current password to set a new password.');
+        return;
+      }
+      if (currentPassword !== user.password) {
+        this.errorMessage.set('Incorrect current password.');
+        return;
+      }
       if (password.length < 8) {
         this.errorMessage.set('Password must be at least 8 characters long.');
         return;
@@ -161,6 +189,7 @@ export class ProfileComponent {
       next: (updated) => {
         this.isLoading.set(false);
         this.successMessage.set('Profile updated successfully!');
+        this.currentPasswordSignal.set('');
         this.passwordSignal.set('');
         this.confirmPasswordSignal.set('');
       },

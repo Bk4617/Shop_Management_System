@@ -104,7 +104,7 @@ export class ProductListComponent implements OnInit {
     }
 
     if (product.price > 1000000000) {
-      this.errorMessage.set('Price cannot exceed the maximum limit of 100 Crores (₹1,000,000,000)');
+      this.errorMessage.set('Invalid');
       return;
     }
 

@@ -75,6 +75,30 @@ export class SalesComponent implements OnInit {
     this.sellQuantity.set(newQty);
   }
 
+  // Handle manual/bulk quantity change
+  onQuantityChange(value: number | null): void {
+    const prod = this.selectedProduct();
+    if (!prod) return;
+
+    this.errorMessage.set(null);
+
+    // Parse value as integer or handle empty/null
+    const parsed = value ? Math.floor(value) : 1;
+
+    if (parsed < 1) {
+      this.sellQuantity.set(1);
+      return;
+    }
+
+    if (parsed > prod.quantity) {
+      this.errorMessage.set(`Only ${prod.quantity} units available in inventory`);
+      this.sellQuantity.set(prod.quantity);
+      return;
+    }
+
+    this.sellQuantity.set(parsed);
+  }
+
   // Process checkout
   checkout(): void {
     const prod = this.selectedProduct();

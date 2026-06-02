@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { ProductService, Product, SaleRecord } from '../../services/product.service';
+import { ProductService, Product } from '../../services/product.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,9 +15,6 @@ export class DashboardComponent implements OnInit {
 
   // Expose product state from service
   protected readonly products = this.productService.products;
-
-  // Sales Records state
-  protected readonly salesRecords = signal<SaleRecord[]>([]);
 
   // Computed metrics using Signals
   protected readonly totalProductsCount = computed(() => this.products().length);
@@ -39,11 +36,7 @@ export class DashboardComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    // Load products and sales records simultaneously
+    // Load products
     this.productService.loadAllProducts().subscribe();
-    this.productService.getSalesRecords().subscribe({
-      next: (records) => this.salesRecords.set(records),
-      error: () => console.error('Failed to load sales history')
-    });
   }
 }

@@ -95,55 +95,77 @@
 
         <div class="form-divider"></div>
 
-        <!-- New Password Field -->
+        <!-- Current Password Field -->
         <div class="form-group">
-          <label class="form-label" for="password">New Password (leave blank to keep current)</label>
-          <div class="input-with-icon" [class.has-error]="passwordError()">
-            <span class="material-symbols-outlined input-icon">lock</span>
-            <input 
-              [type]="showPassword() ? 'text' : 'password'" 
-              id="password"
-              name="password"
-              class="form-control" 
-              placeholder="Enter new password (optional)" 
-              [ngModel]="passwordSignal()"
-              (ngModelChange)="passwordSignal.set($event)"
-              style="padding-right: 44px;">
-            
-            <button 
-              type="button" 
-              class="password-toggle-btn flex-center"
-              (click)="togglePasswordVisibility()" 
-              [title]="showPassword() ? 'Hide Password' : 'Show Password'">
-              <span class="material-symbols-outlined">{{ showPassword() ? 'visibility_off' : 'visibility' }}</span>
-            </button>
-          </div>
-          <div class="validation-message animate-fade-in" *ngIf="passwordError()">
-            <span class="material-symbols-outlined error-small-icon">warning</span>
-            <span>{{ passwordError() }}</span>
-          </div>
-        </div>
-
-        <!-- Confirm New Password Field -->
-        <div class="form-group animate-fade-in" *ngIf="passwordSignal().length > 0">
-          <label class="form-label" for="confirmPassword">Confirm New Password</label>
-          <div class="input-with-icon" [class.has-error]="confirmPasswordError()">
+          <label class="form-label" for="currentPassword">Current Password (required to change password)</label>
+          <div class="input-with-icon" [class.has-error]="currentPasswordError()">
             <span class="material-symbols-outlined input-icon">lock</span>
             <input 
               type="password" 
-              id="confirmPassword"
-              name="confirmPassword"
+              id="currentPassword" 
+              name="currentPassword" 
               class="form-control" 
-              placeholder="Confirm new password" 
-              required 
-              [ngModel]="confirmPasswordSignal()"
-              (ngModelChange)="confirmPasswordSignal.set($event)">
+              placeholder="Enter current password" 
+              [ngModel]="currentPasswordSignal()"
+              (ngModelChange)="currentPasswordSignal.set($event)">
           </div>
-          <div class="validation-message animate-fade-in" *ngIf="confirmPasswordError()">
+          <div class="validation-message animate-fade-in" *ngIf="currentPasswordError()">
             <span class="material-symbols-outlined error-small-icon">warning</span>
-            <span>{{ confirmPasswordError() }}</span>
+            <span>{{ currentPasswordError() }}</span>
           </div>
         </div>
+
+        <ng-container *ngIf="isCurrentPasswordCorrect()">
+          <!-- New Password Field -->
+          <div class="form-group">
+            <label class="form-label" for="password">New Password</label>
+            <div class="input-with-icon" [class.has-error]="passwordError()">
+              <span class="material-symbols-outlined input-icon">lock</span>
+              <input 
+                [type]="showPassword() ? 'text' : 'password'" 
+                id="password"
+                name="password"
+                class="form-control" 
+                placeholder="Enter new password" 
+                [ngModel]="passwordSignal()"
+                (ngModelChange)="passwordSignal.set($event)"
+                style="padding-right: 44px;">
+              
+              <button 
+                type="button" 
+                class="password-toggle-btn flex-center"
+                (click)="togglePasswordVisibility()" 
+                [title]="showPassword() ? 'Hide Password' : 'Show Password'">
+                <span class="material-symbols-outlined">{{ showPassword() ? 'visibility_off' : 'visibility' }}</span>
+              </button>
+            </div>
+            <div class="validation-message animate-fade-in" *ngIf="passwordError()">
+              <span class="material-symbols-outlined error-small-icon">warning</span>
+              <span>{{ passwordError() }}</span>
+            </div>
+          </div>
+
+          <!-- Confirm New Password Field -->
+          <div class="form-group animate-fade-in" *ngIf="passwordSignal().length > 0">
+            <label class="form-label" for="confirmPassword">Confirm New Password</label>
+            <div class="input-with-icon" [class.has-error]="confirmPasswordError()">
+              <span class="material-symbols-outlined input-icon">lock</span>
+              <input 
+                type="password" 
+                id="confirmPassword"
+                name="confirmPassword"
+                class="form-control" 
+                placeholder="Confirm new password" 
+                required 
+                [ngModel]="confirmPasswordSignal()"
+                (ngModelChange)="confirmPasswordSignal.set($event)">
+            </div>
+            <div class="validation-message animate-fade-in" *ngIf="confirmPasswordError()">
+              <span class="material-symbols-outlined error-small-icon">warning</span>
+              <span>{{ confirmPasswordError() }}</span>
+            </div>
+          </div>
+        </ng-container>
 
         <!-- Form Actions -->
         <div class="form-actions">

@@ -96,7 +96,14 @@
             <button type="button" class="btn-qty" (click)="adjustQuantity(-1)" [disabled]="isLoading()">
               <span class="material-symbols-outlined">remove</span>
             </button>
-            <span class="qty-display">{{ sellQuantity() }}</span>
+            <input 
+              type="number" 
+              class="qty-input"
+              [ngModel]="sellQuantity()"
+              (ngModelChange)="onQuantityChange($event)"
+              min="1"
+              [max]="selectedProduct()?.quantity || 1"
+              [disabled]="isLoading()">
             <button type="button" class="btn-qty" (click)="adjustQuantity(1)" [disabled]="isLoading()">
               <span class="material-symbols-outlined">add</span>
             </button>

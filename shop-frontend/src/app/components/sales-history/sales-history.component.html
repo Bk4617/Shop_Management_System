@@ -1,0 +1,61 @@
+<div class="sales-history-wrapper">
+
+  <!-- Summary Section at the Top -->
+  <div class="sales-summary-grid">
+    <div class="glass-card stat-card total-revenue-card">
+      <div class="stat-icon-wrapper accent-glow">
+        <span class="material-symbols-outlined stat-icon">payments</span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Grand Total Sales Revenue</span>
+        <h2 class="stat-val text-cyan">₹{{ totalRevenue() | number:'1.2-2' }}</h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Sales History Table -->
+  <div class="glass-panel sales-history-section animate-fade-in">
+    <div class="section-header">
+      <span class="material-symbols-outlined section-header-icon text-cyan">history</span>
+      <h3>Sales History Log</h3>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="inventory-table sales-table" *ngIf="displayRecords().length > 0; else noSales">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Product Name</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th>Unit Price</th>
+            <th>Stock Sold</th>
+            <th>Total Price</th>
+            <th>Date & Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let record of displayRecords()" class="inventory-row">
+            <td><span class="text-muted">TXN-#{{ record.id }}</span></td>
+            <td><strong>{{ record.productName }}</strong></td>
+            <td><span class="text-secondary table-desc">{{ record.description }}</span></td>
+            <td><span class="badge badge-primary">{{ record.category }}</span></td>
+            <td><strong class="text-white">₹{{ record.unitPrice | number:'1.2-2' }}</strong></td>
+            <td><span class="badge badge-warning">{{ record.quantity }} sold</span></td>
+            <td><strong class="text-cyan">₹{{ record.totalPrice | number:'1.2-2' }}</strong></td>
+            <td><span class="text-muted">{{ record.saleDate | date:'medium' }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #noSales>
+        <div class="empty-state">
+          <span class="material-symbols-outlined empty-icon">receipt_long</span>
+          <h4>No Sales Logged Yet</h4>
+          <p>Complete checkout transactions in the POS Sales terminal to generate records.</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+</div>
