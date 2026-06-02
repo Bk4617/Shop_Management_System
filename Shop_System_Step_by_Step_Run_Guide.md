@@ -74,6 +74,11 @@ npm run start
 Once all services are running, bookmark these URLs to manage and monitor your shop portal:
 
 * **💻 Portal Frontend Client:** http://localhost:4200/
+  * *Dashboard:* http://localhost:4200/dashboard
+  * *Inventory Catalog:* http://localhost:4200/products
+  * *Sales POS Terminal:* http://localhost:4200/sales
+  * *Sales History Log:* http://localhost:4200/sales-history
+  * *Admin Profile Settings:* http://localhost:4200/profile
 * **📡 Eureka Services Registry Dashboard:** http://localhost:8761/
 * **🗄️ User Service H2 Database Console:** http://localhost:8081/h2-console
   * *JDBC URL:* `jdbc:h2:mem:userdb`

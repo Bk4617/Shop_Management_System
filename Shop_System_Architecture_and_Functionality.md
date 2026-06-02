@@ -56,7 +56,7 @@ Manages security, users, roles, and credentials.
 * **Primary Features:**
   * User Registration with unique username checks.
   * User Authentication (Login) validating stored passwords.
-  * Secured password modification endpoint (`PUT /api/users/change-password`).
+  * Secured profile and password modification endpoint (`PUT /api/users/update-profile`).
 * **Database Schema:** `users` table:
   | Column Name | Data Type | Description |
   | :--- | :--- | :--- |
@@ -78,12 +78,15 @@ Manages inventory, point-of-sale checkouts, and transaction records.
     | :--- | :--- | :--- |
     | `id` | `Long (PK)` | Auto-incremented identifier |
     | `name` | `String` | Product label |
+    | `description` | `String` | Product description |
+    | `category` | `String` | Product category |
     | `price` | `Double` | Unit cost |
     | `quantity` | `Integer` | Current stock count |
   * `sales_records` table:
     | Column Name | Data Type | Description |
     | :--- | :--- | :--- |
     | `id` | `Long (PK)` | Auto-incremented identifier |
+    | `product_id` | `Long` | Reference to the sold product |
     | `product_name`| `String` | Copied product label for history preservation |
     | `quantity` | `Integer` | Units checked out |
     | `total_price` | `Double` | Grand total (`price * quantity`) |
@@ -93,10 +96,12 @@ Manages inventory, point-of-sale checkouts, and transaction records.
 A premium user portal showcasing Outfit typography, glassmorphism aesthetics, fluid gradient background blobs, and reactive elements.
 * **State Management:** Angular Signals (`signal`, `computed`) for blazing-fast state tracking.
 * **Primary Views:**
-  1. **Login/Register:** Custom validator overlays, real-time input sanity warnings, show/hide password buttons, and a password strength meter.
-  2. **Dashboard:** KPI summary cards (Total Revenue, Inventory count, Active Users) and a live sales transaction log table.
-  3. **Inventory Management:** Product catalog editing, item additions, and deletions with responsive modals.
-  4. **POS sales terminal:** Interactive shopping cart adding/removing catalog items and deducting inventory in real-time.
+  1. **Login/Register:** Custom validator overlays, real-time input sanity warnings (contact starts with 6-9, username has letters only), show/hide password buttons, and password strength checks.
+  2. **Dashboard:** KPI summary cards (Total Products, Out of Stock, Low Stock, Total Stock Value) and Quick Operations shortcuts.
+  3. **Inventory Management:** Product catalog editing, item additions, and deletions with responsive modals. Capped at ₹100 Crores max limit with simplified `"Invalid"` feedback warnings.
+  4. **POS sales terminal:** Interactive shopping terminal adding/removing catalog items and deducting inventory in real-time. Features a numeric quantity textbox allowing bulk entries with automatic stock-limit capping.
+  5. **Sales History Page:** Separate page showing detailed logs (Transaction ID, Product Name, Description, Category, Unit Price, Stock Sold, and Total Price) and the grand total sales revenue at the top of the page.
+  6. **Admin Profile Settings:** Separate profile edit page with current password verification checks for security.
 
 ---
 
@@ -108,7 +113,7 @@ A premium user portal showcasing Outfit typography, glassmorphism aesthetics, fl
 ### A. User Registration & Sign In Flow
 ```
 [User Input] 
-    │ (Real-time checks: username length, password strength, contact digits)
+    │ (Real-time checks: username letters only, password strength, contact 6-9)
     ▼
 [Angular Form Validated] ──(HTTP POST)──► [User Service]
                                              │
@@ -120,24 +125,23 @@ A premium user portal showcasing Outfit typography, glassmorphism aesthetics, fl
 
 ### B. Point of Sale Checkout Flow
 ```
-[Select items in POS] ──► [Click Checkout] ──► [HTTP POST to Product Service]
-                                                       │
-                                                       ▼
-                                            [Locks database record]
-                                            [Validates Quantity Available]
-                                            ├── (Insufficent) ─► 400 Bad Request
-                                            └── (Sufficient)  ─► Deduct Stock 
-                                                                 Log Sales Record
-                                                                 Save & Return 200 OK
+[Select items in POS] ──► [Manually Type Quantity] ──► [HTTP POST to Product Service]
+                                                               │
+                                                               ▼
+                                                    [Locks database record]
+                                                    [Validates Quantity Available]
+                                                    ├── (Insufficent) ─► 400 Bad Request
+                                                    └── (Sufficient)  ─► Deduct Stock 
+                                                                         Log Sales Record
+                                                                         Save & Return 200 OK
 ```
 
 ### C. Admin Password Modification Flow
 ```
-[Click Clickable Name/Cog] ──► [Enter Password] ──(HTTP PUT)──► [User Service]
-                                                                     │
-                                                                     ▼
-                                                              [Updates Record]
-                                                              [Returns 200 OK]
+[Click Profile Link] ──► [Verify Current Password]
+                               │
+                               ├── (Incorrect) ─► Fields Disabled & Error Alert
+                               └── (Correct)   ─► Enable New Passwords ─► [Update Details] ──► [HTTP PUT] ──► [User Service]
 ```
 
 ---
@@ -146,5 +150,6 @@ A premium user portal showcasing Outfit typography, glassmorphism aesthetics, fl
 
 * **Glassmorphism Panels:** Translucent cards (`backdrop-filter: blur(16px); background: rgba(255,255,255,0.03);`) provide a floating, layered look.
 * **Animated Neon Blobs:** 3 high-performance SVG/CSS blobs slide and scale continuously behind the login card, adding rich depth.
-* **Password Strength Algorithm:** Real-time computation checking complexity (uppercase letters, numbers, length) to guide users reactively.
+* **Aligned Password Visibility Buttons:** Centered eye icon toggle buttons inside password fields across both Login and Profile views.
+* **Dynamic Sales Field Mapping:** Resolves description and category metadata in the client by cross-referencing sales records with cached inventory records.
 * **Robust Error Handling:** Intercepts REST validation issues and displays readable warnings (preventing generic JSON errors).
